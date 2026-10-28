@@ -1,0 +1,32 @@
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /materialesis/
+  # La API y los ficheros reales se sirven tal cual
+  RewriteRule ^api/ - [L]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  # El resto de rutas las resuelve React Router
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Datos privados (base de datos y subidas) nunca accesibles por web
+RedirectMatch 404 /materialesis/(data|deploy|\.git)(/|$)
+<FilesMatch "(\.sqlite|\.md|\.sh|\.log)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "same-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
