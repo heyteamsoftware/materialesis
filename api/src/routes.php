@@ -11,6 +11,8 @@ $r->post('/auth/register', [AuthController::class, 'register']);
 $r->post('/auth/login', [AuthController::class, 'login']);
 $r->post('/auth/logout', [AuthController::class, 'logout']);
 $r->post('/auth/password', [AuthController::class, 'changePassword']);
+$r->patch('/auth/profile', [AuthController::class, 'updateProfile']);
+$r->delete('/auth/account', [AuthController::class, 'deleteAccount']);
 
 // Zona privada: materiales
 $r->get('/sections', [MaterialController::class, 'sections']);

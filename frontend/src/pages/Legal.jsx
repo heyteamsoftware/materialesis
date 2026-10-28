@@ -118,7 +118,7 @@ export function Privacidad() {
       <Seccion n="04" titulo="Cuánto tiempo los conservamos">
         <Lista
           items={[
-            'Cuenta: mientras exista. Puedes pedir su borrado.',
+            'Cuenta: mientras exista. Puedes borrarla en cualquier momento desde «Mi cuenta».',
             'Intentos de acceso fallidos: 15 minutos.',
             'Sesión: hasta 14 días desde el último inicio de sesión.',
             'Mensajes de contacto y opiniones: hasta que se gestionen o pidas su borrado.',
@@ -148,7 +148,7 @@ export function Privacidad() {
       <Seccion n="07" titulo="Tus derechos">
         <p>
           Puedes pedir acceder a tus datos, corregirlos, borrarlos, limitar su uso, oponerte a ciertos tratamientos y recibirlos en un formato
-          portable. También puedes retirar tu consentimiento en cualquier momento. Para ejercerlos, escribe a la dirección de contacto indicando tu
+          portable. También puedes retirar tu consentimiento en cualquier momento. Tus datos los puedes modificar y tu cuenta borrar tú mismo desde «Mi cuenta», en la zona privada. Para el resto de derechos, escribe a la dirección de contacto indicando tu
           nombre de usuario.
         </p>
         <p>

@@ -77,6 +77,58 @@ final class AuthController
         Http::json(['ok' => true]);
     }
 
+    /** Modifica nombre, usuario y email de la propia cuenta. */
+    public static function updateProfile(): never
+    {
+        $user = Auth::require();
+        Http::required(['name' => 'Nombre', 'username' => 'Usuario', 'email' => 'Email']);
+        $username = mb_strtolower(Http::str('username', 40));
+        $email    = mb_strtolower(Http::str('email', 160));
+
+        if (!preg_match('/^[a-z0-9._-]{3,40}$/', $username)) {
+            Http::error('El usuario debe tener entre 3 y 40 caracteres: letras, números, punto, guion o guion bajo', 422, ['field' => 'username']);
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Http::error('El email no parece válido', 422, ['field' => 'email']);
+        }
+        if (Db::value('SELECT 1 FROM users WHERE username = ? AND id <> ?', [$username, $user['id']])) {
+            Http::error('Ese nombre de usuario ya está en uso', 409, ['field' => 'username']);
+        }
+
+        Db::update('users', (int) $user['id'], [
+            'name'     => Http::str('name', 120),
+            'username' => $username,
+            'email'    => $email,
+        ]);
+        $fresh = Db::one('SELECT * FROM users WHERE id = ?', [$user['id']]);
+        Http::json(['user' => Auth::publicUser($fresh)]);
+    }
+
+    /**
+     * Borra la cuenta propia tras confirmar la contraseña.
+     * Las opiniones publicadas quedan como «Usuario eliminado», los pagos conservan
+     * el nombre como justificante (sin vincularlos a la cuenta) y se borran los
+     * mensajes de contacto enviados con ese mismo email.
+     */
+    public static function deleteAccount(): never
+    {
+        $user = Auth::require();
+        if ($user['role'] === 'admin') {
+            Http::error('La cuenta de administración no se puede borrar desde aquí', 403);
+        }
+        $password = (string) (Http::body()['password'] ?? '');
+        if (!password_verify($password, $user['password_hash'])) {
+            Http::error('La contraseña no es correcta', 422, ['field' => 'password']);
+        }
+
+        Db::run("UPDATE reviews SET user_id = NULL, author_name = 'Usuario eliminado' WHERE user_id = ?", [$user['id']]);
+        Db::run('UPDATE payments SET user_id = NULL WHERE user_id = ?', [$user['id']]);
+        Db::run('DELETE FROM messages WHERE email = ?', [$user['email']]);
+        Db::run('DELETE FROM users WHERE id = ?', [$user['id']]);
+        Auth::logout();
+        Http::json(['ok' => true]);
+    }
+
     public static function changePassword(): never
     {
         $user = Auth::require();

@@ -20,6 +20,7 @@ const AppLayout = lazy(() => import('./pages/app/AppLayout'))
 const DashboardHome = lazy(() => import('./pages/app/DashboardHome'))
 const SectionPage = lazy(() => import('./pages/app/SectionPage'))
 const MaterialPage = lazy(() => import('./pages/app/MaterialPage'))
+const AccountPage = lazy(() => import('./pages/app/AccountPage'))
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'))
 const AdminMaterials = lazy(() => import('./pages/admin/AdminMaterials'))
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
@@ -75,6 +76,7 @@ export default function App() {
                 }
               >
                 <Route index element={<DashboardHome />} />
+                <Route path="cuenta" element={<AccountPage />} />
                 <Route path=":section" element={<SectionPage />} />
                 <Route path=":section/:id" element={<MaterialPage />} />
               </Route>

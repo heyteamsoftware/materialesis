@@ -97,10 +97,10 @@ function Navegacion({ user, onLogout }) {
           <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-terracota-100 font-serif text-sm font-semibold text-terracota-700">
             {user.name.trim().charAt(0).toUpperCase()}
           </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold">{user.name}</span>
-            <span className="block truncate text-xs text-tinta-3">@{user.username}</span>
-          </span>
+          <Link to="/app/cuenta" className="group min-w-0 flex-1 rounded-xl" title="Mi cuenta">
+            <span className="block truncate text-sm font-semibold transition-colors group-hover:text-terracota-700">{user.name}</span>
+            <span className="block truncate text-xs text-tinta-3">@{user.username} · Mi cuenta</span>
+          </Link>
           {user.role === 'admin' && (
             <Link to="/admin" className="rounded-full p-2 text-tinta-2 transition hover:bg-lino hover:text-tinta" title="Administración" aria-label="Administración">
               <Settings2 size={17} />
