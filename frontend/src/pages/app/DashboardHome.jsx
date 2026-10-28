@@ -16,7 +16,7 @@ function saludo() {
 }
 
 export default function DashboardHome() {
-  const { user, license } = useAuth()
+  const { user, license, licensePending, payUrl } = useAuth()
   const [conteo, setConteo] = useState({})
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function DashboardHome() {
 
         {!user.license_active && (
           <Link
-            to="/licencia"
+            to={payUrl}
             className="group relative animate-aparece overflow-hidden rounded-[1.6rem] bg-tinta p-6 text-papel shadow-flota transition-transform duration-500 ease-suave [animation-delay:120ms] hover:-translate-y-1"
           >
             <svg viewBox="0 0 200 200" className="absolute -right-10 -top-12 w-44 opacity-25 transition-transform duration-700 group-hover:rotate-12" aria-hidden="true">
@@ -50,7 +50,7 @@ export default function DashboardHome() {
               <Sparkles size={14} /> Estás en modo demo
             </p>
             <p className="relative mt-2 font-serif text-xl leading-snug">
-              {user.license_requested_at
+              {licensePending
                 ? 'Tu solicitud de licencia está en revisión. En cuanto se confirme el pago, todo se desbloquea.'
                 : `Tienes 2 materiales abiertos por área. Desbloquea la biblioteca completa por ${license?.price ?? 49} € al año.`}
             </p>

@@ -11,6 +11,8 @@ const Register = lazy(() => import('./pages/AuthPages').then((m) => ({ default: 
 const Opinion = lazy(() => import('./pages/Opinion'))
 const Contact = lazy(() => import('./pages/Contact'))
 const License = lazy(() => import('./pages/License'))
+const Checkout = lazy(() => import('./pages/Checkout'))
+const AdminPayments = lazy(() => import('./pages/admin/AdminPayments'))
 const AppLayout = lazy(() => import('./pages/app/AppLayout'))
 const DashboardHome = lazy(() => import('./pages/app/DashboardHome'))
 const SectionPage = lazy(() => import('./pages/app/SectionPage'))
@@ -46,6 +48,14 @@ export default function App() {
                 <Route path="opinion" element={<Opinion />} />
                 <Route path="contacto" element={<Contact />} />
                 <Route path="licencia" element={<License />} />
+                <Route
+                  path="licencia/pago"
+                  element={
+                    <RequireAuth>
+                      <Checkout />
+                    </RequireAuth>
+                  }
+                />
                 <Route path="*" element={<NoEncontrado />} />
               </Route>
               <Route path="entrar" element={<Login />} />
@@ -72,6 +82,7 @@ export default function App() {
               >
                 <Route index element={<AdminMaterials />} />
                 <Route path="usuarios" element={<AdminUsers />} />
+                <Route path="pagos" element={<AdminPayments />} />
                 <Route path="resenas" element={<AdminReviews />} />
                 <Route path="mensajes" element={<AdminMessages />} />
               </Route>

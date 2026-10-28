@@ -24,6 +24,8 @@ export function AuthProvider({ children }) {
   const value = useMemo(
     () => ({
       ...state,
+      licensePending: Boolean(state.user?.license_requested_at && state.license?.mode !== 'simulado'),
+      payUrl: state.license?.mode === 'simulado' ? '/licencia/pago' : '/licencia',
       refresh,
       setUser: (user) => setState((s) => ({ ...s, user })),
       async login(username, password) {

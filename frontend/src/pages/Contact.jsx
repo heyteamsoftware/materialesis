@@ -6,7 +6,7 @@ import { Campo, Aviso } from '../components/ui'
 
 export default function Contact() {
   const { user } = useAuth()
-  const vacio = { name: user?.name || '', email: user?.email || '', subject: '', message: '', website: '' }
+  const vacio = { name: user?.name || '', email: '', subject: '', message: '', website: '' }
   const [form, setForm] = useState(vacio)
   const [estado, setEstado] = useState({ enviando: false, error: '', field: '', ok: false })
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })

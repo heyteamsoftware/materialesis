@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { BookOpen, Users, MessageSquareQuote, Inbox, ArrowUpRight, LogOut } from 'lucide-react'
+import { BookOpen, Users, MessageSquareQuote, Inbox, ArrowUpRight, LogOut, Receipt } from 'lucide-react'
 import { Logo } from '../../components/Brand'
 import { useAuth } from '../../lib/auth'
 import { api } from '../../lib/api'
@@ -21,6 +21,7 @@ export default function AdminLayout() {
   const tabs = [
     { to: '/admin', end: true, label: 'Materiales', icon: BookOpen, n: stats?.materials },
     { to: '/admin/usuarios', label: 'Usuarios', icon: Users, n: stats?.users, alerta: stats?.license_requests },
+    { to: '/admin/pagos', label: 'Pagos', icon: Receipt, n: stats?.payments },
     { to: '/admin/resenas', label: 'Reseñas', icon: MessageSquareQuote, alerta: stats?.pending_reviews },
     { to: '/admin/mensajes', label: 'Mensajes', icon: Inbox, alerta: stats?.unread_messages },
   ]

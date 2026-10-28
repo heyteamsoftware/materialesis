@@ -78,6 +78,64 @@ final class CommunityController
     }
 
     /**
+     * Pasarela de pago SIMULADA (payment_mode = 'simulado').
+     * No se piden ni se guardan datos bancarios y no se cobra nada: se registra
+     * un pago de prueba y se activa la licencia al momento.
+     * Para pasar a un cobro real, sustituir este método por la integración con
+     * la pasarela (Stripe, Redsys…) y activar la licencia en su confirmación.
+     */
+    public static function checkout(): never
+    {
+        $user = Auth::require();
+        if (Http::$config['payment_mode'] !== 'simulado') {
+            Http::error('El pago en línea no está disponible', 409);
+        }
+        $method = Http::str('method', 20);
+        if (!in_array($method, ['tarjeta', 'bizum'], true)) {
+            Http::error('Elige un método de pago', 422, ['field' => 'method']);
+        }
+        $recent = (int) Db::value('SELECT COUNT(*) FROM payments WHERE user_id = ? AND created_at > ?',
+            [$user['id'], date('Y-m-d H:i:s', time() - 600)]);
+        if ($recent >= 10) {
+            Http::error('Demasiados intentos de pago seguidos. Espera unos minutos.', 429);
+        }
+
+        $payment = [
+            'user_id'    => $user['id'],
+            'user_name'  => $user['name'],
+            'amount'     => (int) Http::$config['license_price'],
+            'method'     => $method,
+            'reference'  => 'MIS-' . date('ymd') . '-' . strtoupper(bin2hex(random_bytes(3))),
+            'simulated'  => 1,
+            'created_at' => Db::now(),
+        ];
+
+        // Permite probar el caso de pago rechazado
+        if (!empty(Http::body()['simulate_failure'])) {
+            Db::insert('payments', $payment + ['status' => 'rejected', 'license_until' => null]);
+            Http::error('El banco ha rechazado el pago (simulación). No se ha activado la licencia.', 402, ['reference' => $payment['reference']]);
+        }
+
+        $until = Auth::extendLicense($user);
+        $id = Db::insert('payments', $payment + ['status' => 'paid', 'license_until' => $until]);
+        $fresh = Db::one('SELECT * FROM users WHERE id = ?', [$user['id']]);
+        Http::json([
+            'user'    => Auth::publicUser($fresh),
+            'payment' => ['id' => $id, 'status' => 'paid', 'license_until' => $until] + $payment,
+        ], 201);
+    }
+
+    /** Historial de pagos de la propia cuenta. */
+    public static function myPayments(): never
+    {
+        $user = Auth::require();
+        Http::json(['payments' => Db::all(
+            'SELECT id, amount, method, reference, status, simulated, license_until, created_at FROM payments WHERE user_id = ? ORDER BY created_at DESC, id DESC',
+            [$user['id']]
+        )]);
+    }
+
+    /**
      * Solicitud de licencia anual. En modo 'manual' queda pendiente hasta que
      * administración confirma el pago y la activa desde el panel.
      * Aquí se conectaría una pasarela (Stripe, Redsys...) en el futuro.

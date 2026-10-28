@@ -12,7 +12,7 @@ import PageViewer from '../../components/PageViewer'
 export default function SectionPage() {
   const { section: slug } = useParams()
   const sec = sectionBySlug(slug)
-  const { user, license } = useAuth()
+  const { user, license, licensePending, payUrl } = useAuth()
   const [datos, setDatos] = useState(null)
   const [error, setError] = useState('')
 
@@ -163,8 +163,8 @@ export default function SectionPage() {
                           Desbloquea los {bloqueados} materiales restantes de {sec.name} y toda la biblioteca, con descargas incluidas.
                         </p>
                       </div>
-                      <Link to="/licencia" className="btn btn-calido justify-self-start md:justify-self-end">
-                        {user.license_requested_at ? 'Ver estado de mi solicitud' : `Desbloquear por ${license?.price ?? 49} €/año`}
+                      <Link to={payUrl} className="btn btn-calido justify-self-start md:justify-self-end">
+                        {licensePending ? 'Ver estado de mi solicitud' : `Desbloquear por ${license?.price ?? 49} €/año`}
                       </Link>
                     </div>
                   </div>

@@ -13,7 +13,9 @@ return [
     'cookie_path'   => '/materialesis',
     'license_days'  => 365,
     'license_price' => 49,       // € / año (se muestra en la web)
-    'payment_mode'  => 'manual', // el admin activa la licencia al confirmar el pago
+    // 'simulado': pasarela de prueba, activa la licencia al instante sin cobrar nada.
+    // 'manual': la persona solicita la licencia y el admin la activa al confirmar el pago.
+    'payment_mode'  => 'simulado',
     'admin_user'    => 'admin',  // credenciales iniciales (solo se usan al crear la BD)
     'admin_pass'    => 'integracion',
     'max_upload_mb' => 40,

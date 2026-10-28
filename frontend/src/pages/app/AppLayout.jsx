@@ -7,6 +7,7 @@ import { SECTIONS } from '../../lib/sections'
 import { formatDate } from '../../components/ui'
 
 function EstadoLicencia({ user }) {
+  const { licensePending, payUrl } = useAuth()
   if (user.license_active) {
     return (
       <div className="rounded-2xl bg-salvia-100 p-4">
@@ -17,7 +18,7 @@ function EstadoLicencia({ user }) {
       </div>
     )
   }
-  if (user.license_requested_at) {
+  if (licensePending) {
     return (
       <div className="rounded-2xl bg-mostaza-100 p-4">
         <p className="flex items-center gap-2 text-sm font-semibold text-mostaza-700">
@@ -28,7 +29,7 @@ function EstadoLicencia({ user }) {
     )
   }
   return (
-    <Link to="/licencia" className="group block rounded-2xl bg-tinta p-4 text-papel transition-all duration-500 hover:-translate-y-0.5 hover:shadow-flota">
+    <Link to={payUrl} className="group block rounded-2xl bg-tinta p-4 text-papel transition-all duration-500 hover:-translate-y-0.5 hover:shadow-flota">
       <p className="flex items-center gap-2 text-sm font-semibold">
         <Lock size={15} className="text-mostaza" /> Modo demo
       </p>

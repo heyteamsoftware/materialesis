@@ -60,6 +60,19 @@ final class Auth
         return !empty($user['license_until']) && strtotime($user['license_until']) >= time();
     }
 
+    /**
+     * Activa o renueva la licencia: suma los días configurados desde hoy,
+     * o desde la fecha de fin si todavía está vigente. Devuelve la nueva fecha.
+     */
+    public static function extendLicense(array $user): string
+    {
+        $current = !empty($user['license_until']) ? strtotime($user['license_until']) : 0;
+        $from = $current > time() ? $current : time();
+        $until = date('Y-m-d 23:59:59', $from + (int) Http::$config['license_days'] * 86400);
+        Db::run('UPDATE users SET license_until = ?, license_requested_at = NULL WHERE id = ?', [$until, $user['id']]);
+        return $until;
+    }
+
     /** Datos del usuario que se pueden enviar al navegador. */
     public static function publicUser(array $u): array
     {

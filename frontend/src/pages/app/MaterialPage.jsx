@@ -140,7 +140,8 @@ function Contenido({ m, sec, user }) {
   )
 }
 
-function Bloqueado({ m, sec, user, precio }) {
+function Bloqueado({ m, sec, precio }) {
+  const { licensePending, payUrl } = useAuth()
   return (
     <div className="relative grid overflow-hidden rounded-[2rem] bg-papel shadow-suave md:grid-cols-[1fr_1.1fr]">
       {/* Vista previa difuminada */}
@@ -171,8 +172,8 @@ function Bloqueado({ m, sec, user, precio }) {
           {m.kind === 'fisico' ? ' para imprimirlo o editarlo' : ''}. También se desbloquea el resto de materiales de las siete áreas.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link to="/licencia" className="btn btn-calido">
-            {user.license_requested_at ? 'Ver estado de mi solicitud' : `Desbloquear por ${precio} €/año`}
+          <Link to={payUrl} className="btn btn-calido">
+            {licensePending ? 'Ver estado de mi solicitud' : `Desbloquear por ${precio} €/año`}
           </Link>
           <Link to={`/app/${sec.slug}`} className="btn btn-claro">
             Seguir con las demos

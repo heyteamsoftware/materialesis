@@ -24,6 +24,8 @@ $r->get('/reviews', [CommunityController::class, 'reviews']);
 $r->post('/reviews', [CommunityController::class, 'createReview']);
 $r->post('/contact', [CommunityController::class, 'contact']);
 $r->post('/license/request', [CommunityController::class, 'requestLicense']);
+$r->post('/license/checkout', [CommunityController::class, 'checkout']);
+$r->get('/license/payments', [CommunityController::class, 'myPayments']);
 
 // Administración
 $r->get('/admin/stats', [AdminController::class, 'stats']);
@@ -37,7 +39,8 @@ $r->delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
 $r->get('/admin/reviews', [AdminController::class, 'reviews']);
 $r->patch('/admin/reviews/{id}', [AdminController::class, 'updateReview']);
 $r->delete('/admin/reviews/{id}', [AdminController::class, 'deleteReview']);
-$r->get('/admin/messages', [AdminController::class, 'messages']);
+$r->get('/admin/payments', [AdminController::class, 'payments']);
+$r->get('/admin/messages',[AdminController::class, 'messages']);
 $r->patch('/admin/messages/{id}', [AdminController::class, 'updateMessage']);
 $r->delete('/admin/messages/{id}', [AdminController::class, 'deleteMessage']);
 

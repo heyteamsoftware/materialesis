@@ -80,7 +80,11 @@ return [
 
 ## Licencias y pago
 
-Ahora mismo el pago es **manual**: la persona solicita la licencia desde la web, administración confirma el pago y pulsa «Activar» en Usuarios (suma 365 días). El punto para conectar una pasarela (Stripe, Redsys…) es `CommunityController::requestLicense`.
+Por defecto la pasarela es **simulada** (`payment_mode => 'simulado'`): en `/licencia/pago` se elige tarjeta o Bizum con datos ficticios no editables, se muestra el proceso de pago y la licencia se activa al momento (365 días, o se suman si ya estaba vigente). No se piden ni se guardan datos bancarios y no se cobra nada. Cada intento queda registrado en la tabla `payments` y en la pestaña **Pagos** del admin, con referencia y recibo imprimible. En «Opciones de prueba» se puede simular un pago rechazado.
+
+Con `payment_mode => 'manual'` se vuelve al flujo anterior: la persona solicita la licencia y administración la activa en Usuarios.
+
+Para cobrar de verdad, sustituye `CommunityController::checkout` por la integración con la pasarela (Stripe, Redsys…) y llama a `Auth::extendLicense` cuando se confirme el pago.
 
 ## Formato de las páginas de texto del visor
 

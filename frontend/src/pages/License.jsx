@@ -16,7 +16,7 @@ const FILAS = [
 ]
 
 const FAQ = [
-  ['¿Cómo se paga la licencia?', 'Al solicitarla te enviamos por email las instrucciones de pago. En cuanto se confirma, tu cuenta se desbloquea durante 365 días.'],
+  ['¿Cómo se paga la licencia?', 'Desde esta página, con tarjeta o Bizum. En cuanto se confirma el pago, tu cuenta se desbloquea durante 365 días. (Ahora mismo la pasarela funciona en modo simulación: no se cobra nada.)'],
   ['¿Puedo usar los materiales con mis grupos?', 'Sí. Puedes imprimir y usar los materiales en tu trabajo con personas usuarias, grupos y alumnado. Lo que no está permitido es revenderlos o publicarlos.'],
   ['¿Qué pasa cuando termina el año?', 'Tu cuenta vuelve al modo demo, sin perder nada. Si renuevas, el nuevo año se suma al tiempo que te quede.'],
   ['¿Hay licencias para centros o equipos?', 'Sí, escríbenos desde Contacto indicando cuántas personas sois y te preparamos una propuesta.'],
@@ -38,26 +38,40 @@ export default function License() {
     }
   }
 
+  const simulado = license?.mode === 'simulado'
+
   let accion
   if (!user) {
     accion = (
-      <Link to="/registro?next=/licencia" className="btn btn-calido w-full">
-        Crear cuenta y solicitar
+      <Link to="/registro?next=/licencia/pago" className="btn btn-calido w-full">
+        Crear cuenta y pagar
       </Link>
     )
   } else if (user.license_active) {
     accion = (
-      <div className="rounded-2xl bg-salvia-100 px-4 py-3 text-sm text-salvia-700">
-        <ShieldCheck size={16} className="mr-1.5 inline" />
-        {user.role === 'admin' ? 'Acceso completo de administración.' : `Licencia activa hasta el ${formatDate(user.license_until)}.`}
+      <div className="grid gap-3">
+        <div className="rounded-2xl bg-salvia-100 px-4 py-3 text-sm text-salvia-700">
+          <ShieldCheck size={16} className="mr-1.5 inline" />
+          {user.role === 'admin' ? 'Acceso completo de administración.' : `Licencia activa hasta el ${formatDate(user.license_until)}.`}
+        </div>
+        {simulado && user.role !== 'admin' && (
+          <Link to="/licencia/pago" className="btn border border-papel/30 text-papel hover:bg-papel/10">
+            Renovar un año más
+          </Link>
+        )}
       </div>
+    )
+  } else if (simulado) {
+    accion = (
+      <Link to="/licencia/pago" className="btn btn-calido w-full">
+        Pagar licencia anual · {precio} €
+      </Link>
     )
   } else if (user.license_requested_at) {
     accion = (
       <div className="rounded-2xl bg-mostaza-100 px-4 py-3 text-sm text-mostaza-700">
         <Clock size={16} className="mr-1.5 inline" />
-        Solicitud recibida el {formatDate(user.license_requested_at)}. Te escribiremos a <strong>{user.email}</strong> con las instrucciones de
-        pago; tu acceso se activará al confirmarlo.
+        Solicitud recibida el {formatDate(user.license_requested_at)}. Tu acceso se activará en cuanto se confirme el pago.
       </div>
     )
   } else {

@@ -14,7 +14,18 @@ final class AdminController
             'materials'        => (int) Db::value('SELECT COUNT(*) FROM materials'),
             'pending_reviews'  => (int) Db::value("SELECT COUNT(*) FROM reviews WHERE status = 'pending'"),
             'unread_messages'  => (int) Db::value('SELECT COUNT(*) FROM messages WHERE is_read = 0'),
+            'payments'         => (int) Db::value("SELECT COUNT(*) FROM payments WHERE status = 'paid'"),
         ]);
+    }
+
+    /* ---------- Pagos ---------- */
+
+    public static function payments(): never
+    {
+        Auth::requireAdmin();
+        $rows = Db::all('SELECT p.*, u.username FROM payments p LEFT JOIN users u ON u.id = p.user_id ORDER BY p.created_at DESC, p.id DESC');
+        $total = (int) Db::value("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid'");
+        Http::json(['payments' => $rows, 'total' => $total]);
     }
 
     /* ---------- Materiales ---------- */
@@ -169,10 +180,7 @@ final class AdminController
 
         switch ($action) {
             case 'activate':
-                $from = (!empty($user['license_until']) && strtotime($user['license_until']) > time())
-                    ? strtotime($user['license_until']) : time();
-                $until = date('Y-m-d 23:59:59', $from + (int) Http::$config['license_days'] * 86400);
-                Db::run('UPDATE users SET license_until = ?, license_requested_at = NULL WHERE id = ?', [$until, $id]);
+                Auth::extendLicense($user);
                 break;
             case 'deactivate':
                 Db::run('UPDATE users SET license_until = NULL WHERE id = ?', [$id]);

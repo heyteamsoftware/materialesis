@@ -155,6 +155,19 @@ final class Db
             created_at $str NOT NULL
         )");
 
+        self::$pdo->exec("CREATE TABLE IF NOT EXISTS payments (
+            id $pk,
+            user_id INT NULL,
+            user_name $str NOT NULL,
+            amount INT NOT NULL,
+            method $str NOT NULL,
+            reference $str NOT NULL,
+            status $str NOT NULL,
+            simulated INT NOT NULL DEFAULT 1,
+            license_until $str NULL,
+            created_at $str NOT NULL
+        )");
+
         self::$pdo->exec("CREATE TABLE IF NOT EXISTS login_attempts (
             id $pk,
             ip $str NOT NULL,
