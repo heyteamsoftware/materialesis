@@ -4,7 +4,7 @@ import { Quote, Send, Clock } from 'lucide-react'
 import { api } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { SECTIONS, sectionBySlug } from '../lib/sections'
-import { Campo, Aviso, Estrellas, Revela, Cargando, formatDate } from '../components/ui'
+import { Campo, Aviso, Estrellas, Revela, Cargando, formatDate, AceptaPrivacidad } from '../components/ui'
 
 // Ritmo de color del muro: variedad sin perder armonía
 const TONOS = [
@@ -125,7 +125,7 @@ function InvitaAEntrar() {
 }
 
 function FormOpinion({ user, mias, onEnviada }) {
-  const vacio = { rating: 0, body: '', author_name: user.name, author_role: '', section: '' }
+  const vacio = { rating: 0, body: '', author_name: user.name, author_role: '', section: '', accept_privacy: false }
   const [form, setForm] = useState(vacio)
   const [estado, setEstado] = useState({ enviando: false, error: '', ok: '' })
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
@@ -171,7 +171,8 @@ function FormOpinion({ user, mias, onEnviada }) {
             ))}
           </select>
         </div>
-        <button className="btn btn-calido mt-1" disabled={estado.enviando || !form.rating || form.body.trim().length < 15}>
+        <AceptaPrivacidad checked={form.accept_privacy} onChange={(v) => setForm({ ...form, accept_privacy: v })} />
+        <button className="btn btn-calido mt-1" disabled={estado.enviando || !form.rating || form.body.trim().length < 15 || !form.accept_privacy}>
           <Send size={16} /> {estado.enviando ? 'Enviando…' : 'Enviar a revisión'}
         </button>
       </form>

@@ -24,6 +24,9 @@ final class CommunityController
     public static function createReview(): never
     {
         $user = Auth::require();
+        if (empty(Http::body()['accept_privacy'])) {
+            Http::error('Debes aceptar la política de privacidad', 422, ['field' => 'accept_privacy']);
+        }
         Http::required(['body' => 'Tu opinión']);
         $rating = Http::int('rating');
         if ($rating < 1 || $rating > 5) {
@@ -47,6 +50,7 @@ final class CommunityController
             'body'        => $body,
             'status'      => 'pending',
             'created_at'  => Db::now(),
+            'privacy_at'  => Db::now(),
         ]);
         Http::json(['ok' => true, 'message' => 'Gracias. Tu opinión se publicará tras una revisión.'], 201);
     }
@@ -56,6 +60,9 @@ final class CommunityController
         // Campo trampa para bots: los humanos no lo ven ni lo rellenan
         if (Http::str('website') !== '') {
             Http::json(['ok' => true]);
+        }
+        if (empty(Http::body()['accept_privacy'])) {
+            Http::error('Debes aceptar la política de privacidad', 422, ['field' => 'accept_privacy']);
         }
         Http::required(['name' => 'Nombre', 'email' => 'Email', 'subject' => 'Asunto', 'message' => 'Mensaje']);
         $email = Http::str('email', 160);
@@ -73,6 +80,7 @@ final class CommunityController
             'subject'    => Http::str('subject', 160),
             'body'       => Http::str('message', 4000),
             'created_at' => Db::now(),
+            'privacy_at' => Db::now(),
         ]);
         Http::json(['ok' => true], 201);
     }

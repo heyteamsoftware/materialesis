@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, Link } from 'react-router-dom'
 import { AuthProvider, RequireAuth } from './lib/auth'
 import { ToastProvider, Cargando } from './components/ui'
 import { PublicLayout } from './components/SiteChrome'
+import CookieNotice from './components/CookieNotice'
 import Landing from './pages/Landing'
 
 // Las zonas privada y de administración se cargan solo cuando se necesitan
@@ -13,6 +14,8 @@ const Contact = lazy(() => import('./pages/Contact'))
 const License = lazy(() => import('./pages/License'))
 const Checkout = lazy(() => import('./pages/Checkout'))
 const AdminPayments = lazy(() => import('./pages/admin/AdminPayments'))
+const Privacidad = lazy(() => import('./pages/Legal').then((m) => ({ default: m.Privacidad })))
+const Cookies = lazy(() => import('./pages/Legal').then((m) => ({ default: m.Cookies })))
 const AppLayout = lazy(() => import('./pages/app/AppLayout'))
 const DashboardHome = lazy(() => import('./pages/app/DashboardHome'))
 const SectionPage = lazy(() => import('./pages/app/SectionPage'))
@@ -41,6 +44,7 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
       <ToastProvider>
         <AuthProvider>
+          <CookieNotice />
           <Suspense fallback={<Cargando pantalla />}>
             <Routes>
               <Route element={<PublicLayout />}>
@@ -56,6 +60,8 @@ export default function App() {
                     </RequireAuth>
                   }
                 />
+                <Route path="privacidad" element={<Privacidad />} />
+                <Route path="cookies" element={<Cookies />} />
                 <Route path="*" element={<NoEncontrado />} />
               </Route>
               <Route path="entrar" element={<Login />} />

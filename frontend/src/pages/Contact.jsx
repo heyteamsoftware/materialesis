@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { Send, MessageCircleHeart, Clock3, BookOpenCheck } from 'lucide-react'
 import { api } from '../lib/api'
 import { useAuth } from '../lib/auth'
-import { Campo, Aviso } from '../components/ui'
+import { Campo, Aviso, AceptaPrivacidad } from '../components/ui'
 
 export default function Contact() {
   const { user } = useAuth()
-  const vacio = { name: user?.name || '', email: '', subject: '', message: '', website: '' }
+  const vacio = { name: user?.name || '', email: '', subject: '', message: '', website: '', accept_privacy: false }
   const [form, setForm] = useState(vacio)
   const [estado, setEstado] = useState({ enviando: false, error: '', field: '', ok: false })
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
@@ -83,9 +83,10 @@ export default function Contact() {
                     Web <input tabIndex={-1} autoComplete="off" value={form.website} onChange={set('website')} />
                   </label>
                 </div>
+                <AceptaPrivacidad checked={form.accept_privacy} onChange={(v) => setForm({ ...form, accept_privacy: v })} />
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <p className="text-xs text-tinta-3">Solo usaremos tus datos para responderte.</p>
-                  <button className="btn btn-primario" disabled={estado.enviando}>
+                  <button className="btn btn-primario" disabled={estado.enviando || !form.accept_privacy}>
                     {estado.enviando ? 'Enviando…' : 'Enviar mensaje'} <Send size={16} />
                   </button>
                 </div>

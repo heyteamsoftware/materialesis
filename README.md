@@ -86,6 +86,12 @@ Con `payment_mode => 'manual'` se vuelve al flujo anterior: la persona solicita 
 
 Para cobrar de verdad, sustituye `CommunityController::checkout` por la integración con la pasarela (Stripe, Redsys…) y llama a `Auth::extendLicense` cuando se confirme el pago.
 
+## Privacidad y cookies
+
+- `/privacidad` y `/cookies` describen la demo. El responsable, los correos y los datos de ejemplo son ficticios y están marcados como tales en el texto.
+- Solo hay una cookie técnica de sesión (`mis_session`). El aviso de cookies recuerda en `localStorage` que ya se ha leído (`mis_cookies_visto`). No hay analítica, publicidad ni recursos de terceros: las tipografías se sirven desde `frontend/node_modules` (paquetes `@fontsource-variable`).
+- Registro, contacto y opiniones exigen aceptar la política; la API lo valida y guarda la fecha (`privacy_at`). Al borrar una cuenta, sus opiniones quedan firmadas como «Usuario eliminado».
+
 ## Formato de las páginas de texto del visor
 
 ```

@@ -93,6 +93,17 @@ final class Db
         return date('Y-m-d H:i:s');
     }
 
+    /** Añade una columna si no existe (para bases de datos ya creadas). */
+    public static function ensureColumn(string $table, string $column, string $definition): void
+    {
+        $names = self::$driver === 'sqlite'
+            ? array_column(self::all("PRAGMA table_info($table)"), 'name')
+            : array_column(self::all("SHOW COLUMNS FROM $table"), 'Field');
+        if (!in_array($column, $names, true)) {
+            self::$pdo->exec("ALTER TABLE $table ADD COLUMN $column $definition");
+        }
+    }
+
     private static function migrate(array $config): void
     {
         $pk   = self::$driver === 'sqlite' ? 'INTEGER PRIMARY KEY AUTOINCREMENT' : 'INT AUTO_INCREMENT PRIMARY KEY';
@@ -173,6 +184,11 @@ final class Db
             ip $str NOT NULL,
             attempted_at $str NOT NULL
         )");
+
+        // Fecha en que se aceptó la política de privacidad (registro, contacto, opiniones)
+        foreach (['users', 'messages', 'reviews'] as $table) {
+            self::ensureColumn($table, 'privacy_at', $str . ' NULL');
+        }
 
         if ((int) self::value('SELECT COUNT(*) FROM users') === 0) {
             Seed::run($config);

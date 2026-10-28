@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Star, X, CheckCircle2, AlertCircle } from 'lucide-react'
 
 /* ---------- Carga ---------- */
@@ -184,7 +185,23 @@ export function Panel({ abierto, onCerrar, titulo, children, ancho = 'max-w-2xl'
   )
 }
 
-export const formatDate = (iso, opts = { day: 'numeric', month: 'long', year: 'numeric' }) => {
+/* ---------- Casilla de aceptación de la política de privacidad ---------- */
+export function AceptaPrivacidad({ checked, onChange }) {
+  return (
+    <label className="flex items-start gap-3 text-sm leading-relaxed text-tinta-2">
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="mt-1 h-4 w-4 shrink-0 accent-[#c2643f]" />
+      <span>
+        He leído y acepto la{' '}
+        <Link to="/privacidad" className="enlace font-semibold text-tinta">
+          política de privacidad
+        </Link>
+        .
+      </span>
+    </label>
+  )
+}
+
+export const formatDate =(iso, opts = { day: 'numeric', month: 'long', year: 'numeric' }) => {
   if (!iso) return ''
   const d = new Date(iso.replace(' ', 'T'))
   return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('es-ES', opts)

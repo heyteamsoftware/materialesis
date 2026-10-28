@@ -141,9 +141,17 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="relative border-t border-papel/10">
-        <p className="mx-auto max-w-7xl px-5 py-6 text-xs text-papel/45 sm:px-8">
-          © {new Date().getFullYear()} Materiales de Apoyo a la Intervención Social · CIFP Tony Gallardo
-        </p>
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-6 text-xs text-papel/45 sm:px-8">
+          <p>© {new Date().getFullYear()} Materiales de Apoyo a la Intervención Social · CIFP Tony Gallardo</p>
+          <nav className="flex gap-5" aria-label="Legal">
+            <Link to="/privacidad" className="enlace hover:text-papel">
+              Privacidad
+            </Link>
+            <Link to="/cookies" className="enlace hover:text-papel">
+              Cookies
+            </Link>
+          </nav>
+        </div>
       </div>
     </footer>
   )

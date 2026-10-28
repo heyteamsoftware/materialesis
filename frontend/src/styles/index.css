@@ -5,8 +5,8 @@
    mostaza. Serif editorial (Fraunces) + sans limpia (Plus Jakarta Sans).
    ------------------------------------------------------------------ */
 @theme {
-  --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
-  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Fraunces Variable", Fraunces, "Iowan Old Style", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --color-arena: #f4ede1;
   --color-papel: #fbf8f2;

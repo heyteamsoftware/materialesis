@@ -19,6 +19,9 @@ final class AuthController
     public static function register(): never
     {
         Http::required(['name' => 'Nombre', 'username' => 'Usuario', 'email' => 'Email', 'password' => 'Contraseña']);
+        if (empty(Http::body()['accept_privacy'])) {
+            Http::error('Debes aceptar la política de privacidad', 422, ['field' => 'accept_privacy']);
+        }
         $username = mb_strtolower(Http::str('username', 40));
         $email    = mb_strtolower(Http::str('email', 160));
         $password = (string) (Http::body()['password'] ?? '');
@@ -43,6 +46,7 @@ final class AuthController
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             'role'          => 'user',
             'created_at'    => Db::now(),
+            'privacy_at'    => Db::now(),
         ]);
         $user = Db::one('SELECT * FROM users WHERE id = ?', [$id]);
         Auth::login($user);

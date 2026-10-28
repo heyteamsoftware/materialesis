@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../lib/auth'
-import { Campo, Aviso } from '../components/ui'
+import { Campo, Aviso, AceptaPrivacidad } from '../components/ui'
 import { Logo, Glifo } from '../components/Brand'
 import { SECTIONS } from '../lib/sections'
 
@@ -79,7 +79,10 @@ export function Login() {
     setError('')
     try {
       const user = await login(form.username, form.password)
-      navigate(safeNext(params.get('next'), user.role === 'admin' ? '/admin' : '/app'), { replace: true })
+      const next = safeNext(params.get('next'), '')
+      // La cuenta de administración entra siempre al panel (salvo que viniera de otra página del panel)
+      const destino = user.role === 'admin' ? (next.startsWith('/admin') ? next : '/admin') : next || '/app'
+      navigate(destino, { replace: true })
     } catch (err) {
       setError(err.message)
       setEnviando(false)
@@ -115,7 +118,7 @@ export function Register() {
   const { register } = useAuth()
   const navigate = useNavigate()
   const [params] = useSearchParams()
-  const [form, setForm] = useState({ name: '', username: '', email: '', password: '' })
+  const [form, setForm] = useState({ name: '', username: '', email: '', password: '', accept_privacy: false })
   const [error, setError] = useState({ msg: '', field: '' })
   const [enviando, setEnviando] = useState(false)
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
@@ -148,14 +151,15 @@ export function Register() {
       }
     >
       <form onSubmit={onSubmit} className="grid gap-5" noValidate>
-        {error.msg && !error.field && <Aviso>{error.msg}</Aviso>}
+        {error.msg && (!error.field || error.field === 'accept_privacy') && <Aviso>{error.msg}</Aviso>}
         <Campo label="Nombre y apellidos" name="name" autoComplete="name" value={form.name} onChange={set('name')} error={fe('name')} />
         <div className="grid gap-5 sm:grid-cols-2">
           <Campo label="Nombre de usuario" name="username" autoComplete="username" value={form.username} onChange={set('username')} error={fe('username')} hint="Letras, números, punto o guion" />
           <Campo label="Email" name="email" type="email" autoComplete="email" value={form.email} onChange={set('email')} error={fe('email')} />
         </div>
         <CampoClave label="Contraseña" name="password" autoComplete="new-password" value={form.password} onChange={set('password')} error={fe('password')} hint="Mínimo 8 caracteres" />
-        <button className="btn btn-calido mt-2 w-full" disabled={enviando}>
+        <AceptaPrivacidad checked={form.accept_privacy} onChange={(v) => setForm({ ...form, accept_privacy: v })} />
+        <button className="btn btn-calido mt-2 w-full" disabled={enviando || !form.accept_privacy}>
           {enviando ? 'Creando cuenta…' : 'Crear cuenta gratis'} <ArrowRight size={18} />
         </button>
       </form>

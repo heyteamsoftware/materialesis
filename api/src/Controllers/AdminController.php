@@ -204,7 +204,7 @@ final class AdminController
         if ((int) $p['id'] === (int) $admin['id']) {
             Http::error('No puedes borrar tu propia cuenta', 422);
         }
-        Db::run('UPDATE reviews SET user_id = NULL WHERE user_id = ?', [(int) $p['id']]);
+        Db::run("UPDATE reviews SET user_id = NULL, author_name = 'Usuario eliminado' WHERE user_id = ?", [(int) $p['id']]);
         Db::run('DELETE FROM users WHERE id = ?', [(int) $p['id']]);
         Http::json(['ok' => true]);
     }
